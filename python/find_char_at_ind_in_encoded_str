@@ -1,0 +1,81 @@
+"""
+
+enc_str = "ab3efg2"
+
+dec_str = "abababefgefg"
+0-indexed  01234
+
+
+k = 4 character a
+
+
+Given enc_str and some integer k, find kth char in dec_str.
+
+You are not given dec_str.
+
+
+enc_str = "asdfsd32432432dsfsdf33fsdfds32324324dsfds34324"
+
+
+"""
+
+
+def get_char_from_dec_str(enc_str, k):
+    """
+    enc_str: n is the length of enc_str
+    k: index in decoded string
+
+    time-complexity: O(n + p), where p are the number of patterns
+    space-complexity: O(n) # n for input string and n for holding patterns and freqs.
+
+    """
+
+    patterns = []
+    freqs = []
+
+    p_start = 0
+
+    f_start = 0
+
+    first_char = True
+    first_num = True
+
+    for i in range(len(enc_str)):
+
+        if not enc_str[i].isdigit() and first_char:
+
+            if enc_str[f_start:i] != '':
+                freqs.append(int(enc_str[f_start:i]))
+            first_num = True
+            first_char = False
+            p_start = i
+
+        elif enc_str[i].isdigit() and first_num:
+            patterns.append(enc_str[p_start:i])
+            f_start = i
+            first_num = False
+            first_char = True
+
+    # Working the last case.
+    freqs.append(enc_str[f_start:(f_start + 1)])
+
+    len_patterns = [len(x) for x in patterns]
+
+    pattern_epanded_length = [x * y for x, y in zip(len_patterns, freqs)]
+
+    for i in range(len(pattern_epanded_length)):
+        if k < int(pattern_epanded_length[i]):
+            break
+    if i == 0:
+        return patterns[i][int(k % len_patterns[i])]
+    else:
+        return patterns[i][int((k - len_patterns[i - 1]) % len_patterns[i])]
+
+
+if '__name__' == '__main__':
+
+    enc_str = 'ab3efg2'
+
+    print(get_char_from_dec_str(enc_str, 5))  # b
+
+    print(get_char_from_dec_str(enc_str, 7))  # g
